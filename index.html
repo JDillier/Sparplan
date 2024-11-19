@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sparplan Diagramm</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        label, input, button {
+            display: block;
+            margin: 5px 0;
+        }
+
+        canvas {
+            max-width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <h1>Sparplan Simulation</h1>
+
+    <form id="savingsForm">
+        <label for="monthlyIncome">Monatliche Einnahmen:</label>
+        <input type="number" id="monthlyIncome" name="monthlyIncome" required>
+
+        <label for="monthlyExpenses">Monatliche Ausgaben:</label>
+        <input type="number" id="monthlyExpenses" name="monthlyExpenses" required>
+
+        <label for="monthlySavings">Monatlicher Sparbetrag:</label>
+        <input type="number" id="monthlySavings" name="monthlySavings" required>
+
+        <label for="months">Anzahl der Monate:</label>
+        <input type="number" id="months" name="months" required>
+
+        <button type="submit">Berechnen</button>
+    </form>
+
+    <canvas id="savingsChart" width="400" height="200"></canvas>
+
+    <script>
+    document.getElementById('savingsForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Verhindert das Neuladen der Seite
+
+        // Werte aus den Eingabefeldern holen
+        const monthlyIncome = parseFloat(document.getElementById('monthlyIncome').value);
+        const monthlyExpenses = parseFloat(document.getElementById('monthlyExpenses').value);
+        const monthlySavings = parseFloat(document.getElementById('monthlySavings').value);
+        const months = parseInt(document.getElementById('months').value);
+
+        // Berechnung der monatlichen und kumulierten Einsparungen
+        let cumulativeSavings = 0;
+        const monthlySavingsData = [];
+        const labels = [];
+        for (let i = 1; i <= months; i++) {
+            cumulativeSavings += monthlySavings;
+            monthlySavingsData.push(cumulativeSavings);
+            labels.push("Monat " + i);
+        }
+
+        // Daten und Konfiguration für das Diagramm
+        const data = {
+            labels: labels,
+            datasets: [{
+                label: 'Kumulierte Ersparnisse',
+                data: monthlySavingsData,
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        };
+
+        const config = {
+            type: 'line', // Typ des Diagramms
+            data: data,
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        };
+
+        // Diagramm erstellen oder aktualisieren
+        const ctx = document.getElementById('savingsChart').getContext('2d');
+        new Chart(ctx, config);
+    });
+    </script>
+</body>
+</html>
